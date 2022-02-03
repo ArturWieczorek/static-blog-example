@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-US">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width" />
+      <title>StaTic Blog | Post Archive
+      </title>
+      <meta name="description" content="Download free amazing responsive StaTic Blog template."/>
+      <meta name="keywords" content="free, responsive, blog"/>
+      <link rel="stylesheet" href="css/components.css">
+      <link rel="stylesheet" href="css/responsee.css">
+      <link rel="stylesheet" href="css/pagination.css">
+      <!-- CUSTOM STYLE -->
+      <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" href="css/template-style.css">
+      <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+      <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="js/modernizr.js"></script>
+      <script type="text/javascript" src="js/responsee.js"></script>
+      <script src="https://unpkg.com/lunr/lunr.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
+      <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+   </head>
+   <body class="size-1140">
+      <!-- TOP NAV WITH LOGO -->
+      <header class="margin-bottom">
+         <div class="line">
+            <nav>
+               <div class="top-nav">
+                 <p class="nav-text"></p>
+                 <a class="logo" href="index.html">
+                   StaTic<span>Blog</span>
+                   </a>
+                   <h1>Static HTML blog template with local JSON database</h1>
+                   <ul class="top-ul right">
+                     <li>
+                        <a href="index.html">Blog</a>
+                     </li>
+                     <li>
+                        <a href="about.html">About</a>
+                     </li>
+                     <li>
+                        <a href="archive.html">Archive</a>
+                     </li>
+                     <li>
+                        <a href="search.html">Search</a>
+                     </li>
+                  </ul>
+               </div>
+            </nav>
+         </div>
+      </header>
+      <!-- MAIN SECTION -->
+      <section id="article-section" class="line archive">
+         <div class="margin">
+            <!-- ARTICLES -->
+            <div id="pagination" class="s-12 l-9">
+              <div class="data-container">
+                  <div class="pagination"></div>
+              </div>
+            </div>
+            <!-- SIDEBAR -->
+            <div class="s-12 l-3">
+               <aside>
+                  <!-- NEWS 1 -->
+                  <img src="img/archive/marcus_aurelius.png" alt="Marcus Aurelius">
+                  <div class="aside-block margin-bottom">
+                     <h3>On Happiness</h3>
+                     <p>The happiness of your life depends upon the quality of your thoughts</p>
+                  </div>
+                  <!-- NEWS 2 -->
+                  <img src="img/archive/seneca.png" alt="Seneca">
+                  <div class="aside-block margin-bottom">
+                     <h3>On Goals</h3>
+                     <p>If a man knows not to which port he sails, no wind is favourable</p>
+                  </div>
+                  <!-- NEWS 3 -->
+                  <img src="img/archive/epictetus.jpg" alt="Epictetus">
+                  <div class="aside-block margin-bottom">
+                     <h3>On learning</h3>
+                     <p>If you want to be a writer, write.
+                     If you want to improve, be content to be thought foolish and stupid</p>
+                  </div>
+               </aside>
+            </div>
+         </div>
+      </section>
+      <!-- FOOTER -->
+      <div class="line">
+        <footer>
+          <div>
+             <div class="logo">
+               StaTic<span>Blog</span>
+             </div>
+             Content stored in local JSON database & client side search with Lunr.js
+          </div>
+        </footer>
+      </div>
+   </body>
+</html>
+
+
+<script type="text/javascript" src="blog_database.json"></script>
+<script>
+const blogPosts = JSON.parse(data);
+console.log('Blog entries from json database: ', blogPosts);
+
+let classStyle = '';
+const pageSize = blogPosts.length;
+
+$(document).ready(function(){
+$('#pagination').pagination({
+    dataSource: blogPosts,
+    pageSize: pageSize,
+    className: 'paginationjs-theme-blue',
+    callback: function(data, pagination) {
+      let html = '';
+          let dataContainer = $('.data-container');
+          $.each(data, function(index, item) {
+            console.log("Post object " +  (item.idx + 1) + ": " + JSON.stringify(item));
+            html += '<article class="margin-bottom">';
+            html += '<div id=' + index + ' class="post-1 line">';
+            html += '<div class="s-12 l-11 post-image">';
+            html += '<a href="post-' + (index + 1) + '.html"><img src="' + item.imageLink + '" alt="Post Image"></a>';
+            html += '</div>';
+            html += '<div class="s-12 l-1 post-date">';
+            html += '<p class="date">' + item.date.day + '</p>';
+            html += '<p class="month">' + item.date.month + '</p>';
+            html += '</div></div>';
+            html += '<div class="post-text">';
+            html += '<a href="post-' + (index + 1) + '.html">';
+            html += '<h2>' + item.title + '</h2>';
+            html += '</a><p>' + item.preview + '</p>';
+            html += '<a class="continue-reading" href="post-' + (index + 1) + '.html">Continue reading</a>';
+            html += '</div></article>';
+
+          });
+
+          html += '</br>';
+          dataContainer.html(html);
+
+          for (let index = 0; index < (pageSize + 1); index++) {
+            if ((index + 1) % pageSize == 1) {
+              classStyle = 'post-1 line';
+            } else if ((index + 1) % pageSize == 2) {
+              classStyle = "post-2 line"
+            } else if ((index + 1) % pageSize == 3) {
+              classStyle = "post-3 line";
+            } else if ((index + 1) % pageSize == 4) {
+              classStyle = "post-4 line";
+            } else if ((index + 1) % pageSize == 0) {
+              classStyle = "post-5 line";
+            }
+            $("#" + index).attr('class', classStyle)
+          }
+    }
+})
+});
+
+</script>

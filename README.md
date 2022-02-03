@@ -1,1 +1,2 @@
-# static-blog-example
+# blog-template
+Static HTML JS &amp; CSS Blog Template

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-US">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width" />
+      <title>StaTic Blog | Search Posts
+      </title>
+      <meta name="description" content="Download free amazing responsive StaTic Blog template."/>
+      <meta name="keywords" content="free, responsive, blog"/>
+      <link rel="stylesheet" href="css/components.css">
+      <link rel="stylesheet" href="css/responsee.css">
+      <link rel="stylesheet" href="css/pagination.css">
+      <!-- CUSTOM STYLE -->
+      <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" href="css/template-style.css">
+      <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+      <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="js/modernizr.js"></script>
+      <script type="text/javascript" src="js/responsee.js"></script>
+      <script src="https://unpkg.com/lunr/lunr.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
+      <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+   </head>
+   <body class="size-1140">
+      <!-- TOP NAV WITH LOGO -->
+      <header class="margin-bottom">
+         <div class="line">
+            <nav>
+               <div class="top-nav">
+                 <p class="nav-text"></p>
+                 <a class="logo" href="index.html">
+                   StaTic<span>Blog</span>
+                   </a>
+                   <h1>Static HTML blog template with local JSON database</h1>
+                   <ul class="top-ul right">
+                     <li>
+                        <a href="index.html">Blog</a>
+                     </li>
+                     <li>
+                        <a href="about.html">About</a>
+                     </li>
+                     <li>
+                        <a href="archive.html">Archive</a>
+                     </li>
+                     <li>
+                        <a href="search.html">Search</a>
+                     </li>
+                  </ul>
+               </div>
+            </nav>
+         </div>
+      </header>
+      <!-- MAIN SECTION -->
+      <section id="article-section" class="line archive">
+        <p> Search by blog post title:
+          <input type="text" id="titleSearch" value="more">
+          </br></br>
+        <p>
+         <div class="margin">
+            <!-- ARTICLES -->
+            <div id="pagination" class="s-12 l-9">
+              <div class="data-container">
+                  <div class="pagination"></div>
+              </div>
+            </div>
+            <!-- SIDEBAR -->
+            <div class="s-12 l-3">
+               <aside>
+                  <!-- NEWS 1 -->
+                  <img src="img/search/nature.png" alt="Nature">
+                  <div class="aside-block margin-bottom">
+                     <h3>Simplicity is natures first step, and the last of art.</h3>
+                  </div>
+               </aside>
+            </div>
+         </div>
+      </section>
+      <!-- FOOTER -->
+      <div class="line">
+        <footer>
+          <div>
+             <div class="logo">
+               StaTic<span>Blog</span>
+             </div>
+             Content stored in local JSON database & client side search with Lunr.js
+          </div>
+        </footer>
+      </div>
+   </body>
+</html>
+
+
+<script type="text/javascript" src="blog_database.json"></script>
+<script>
+const blogPosts = JSON.parse(data);
+console.log('Blog entries from json database: ', blogPosts);
+
+let classStyle = '';
+const pageSize = blogPosts.length;
+
+let index = lunr(function () {
+    this.ref('title')
+    this.field('title')
+    this.field('preview')
+    this.field('author')
+
+    blogPosts.forEach(function (doc) {
+        this.add(doc)
+    }, this)
+});
+
+let searchKeyword = "title:" + titleSearch.value
+let results = index.search(searchKeyword);
+let resultsFull = results.map(function (item) {
+    return blogPosts.filter(function (value, index, arr) {
+        return value.title == item.ref;
+    })[0];
+});
+
+console.log('Results: ', results);
+console.log('Full Results: ', resultsFull);
+
+const search = function(source) {
+  $(document).ready(function(){
+    $('#pagination').pagination({
+      dataSource: source,
+      pageSize: pageSize,
+      className: 'paginationjs-theme-blue',
+      callback: function(data, pagination) {
+        var html = '';
+            var dataContainer = $('.data-container');
+            $.each(data, function(index, item) {
+              console.log("Post object " +  (item.idx + 1) + ": " + JSON.stringify(item));
+              html += '<article class="margin-bottom">';
+              html += '<div id=' + index + ' class="post-1 line">';
+              html += '<div class="s-12 l-11 post-image">';
+              html += '<a href="post-' + ( item.idx + 1) + '.html"><img src="' + item.imageLink + '" alt="Post Image"></a>';
+              html += '</div>';
+              html += '<div class="s-12 l-1 post-date">';
+              html += '<p class="date">' + item.date.day + '</p>';
+              html += '<p class="month">' + item.date.month + '</p>';
+              html += '</div></div>';
+              html += '<div class="post-text">';
+              html += '<a href="post-' + (item.idx + 1) + '.html">';
+              html += '<h2>' + item.title + '</h2>';
+              html += '</a><p>' + item.preview + '</p>';
+              html += '<a class="continue-reading" href="post-' + (item.idx + 1) + '.html">Continue reading</a>';
+              html += '</div></article>';
+
+            });
+
+            html += '';
+
+            dataContainer.html(html);
+            for (let index = 0; index < blogPosts.length; index++) {
+              if (blogPosts[(index)].idx == 0) {
+                classStyle = 'post-5 line';
+              } else if (blogPosts[(index)].idx == 1) {
+                classStyle = "post-4 right-align line";
+              } else if (blogPosts[(index)].idx == 2) {
+                classStyle = "post-3 line"
+              } else if (blogPosts[(index)].idx == 3) {
+                classStyle = "post-2 right-align line";
+              } else if (blogPosts[(index)].idx == 4) {
+                classStyle = "post-1 line";
+              }
+              $("#" + index).attr('class', classStyle)
+            }
+
+
+          }
+        })
+    })
+};
+
+const searchByTitleInputHandler = function(e) {
+    searchKeyword = e.target.value.toString() + "*";
+    console.log("search keyword: " + searchKeyword)
+
+    let results = index.search(searchKeyword);
+    console.log("results : " + JSON.stringify(results))
+
+    let resultsFull = results.map(function (item) {
+        console.log("Item results : " + JSON.stringify(item))
+        return blogPosts.filter(function (value, index, arr) {
+            return value.title == item.ref;
+        })[0];
+    });
+    search(resultsFull);
+}
+
+titleSearch.addEventListener('input', searchByTitleInputHandler);
+
+search(resultsFull);
+</script>
