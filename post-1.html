@@ -155,7 +155,7 @@ const totalPosts = blogPosts.length
 $(document).ready(function(){
   let html = '';
   if (postNo > 1){
-    html += '<a href="' + (blogPosts[postNo - 1].link) + '">';
+    html += '<a href="' + (blogPosts[postNo - 2].link) + '">';
     html += '<h3>Previous</h3></a>';
   }
   if (postNo < totalPosts){

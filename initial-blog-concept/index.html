@@ -1,0 +1,64 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A simple Simple Static Blog template</title>
+  <meta name="description" content="A Simple Static Blog template.">
+  <meta name="author" content="Artur Wieczorek">
+
+  <meta property="og:title" content="Simple Static Blog">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
+  <link rel="stylesheet" href="mystyle.css">
+</head>
+
+<body>
+<p>
+  <a href="/github-website/search.html">Search posts</a>
+</p>
+
+</br></br>
+
+<div id="pagination">
+    <div class="data-container">
+        <div class="pagination"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="blog_database.json"></script>
+<script>
+const blogPosts = JSON.parse(data);
+console.log('Blog entries from json database: ', blogPosts);
+
+$(document).ready(function(){
+$('#pagination').pagination({
+    dataSource: blogPosts,
+    pageSize: 2,
+    className: 'paginationjs-theme-green',
+    callback: function(data, pagination) {
+      var html = '';
+          var dataContainer = $('.data-container');
+          $.each(data, function(index, item) {
+            html += '<p><a href='+ item.link + '>' + item.title  + '</a></p>';
+            html += '<p>'+ item.preview + '</p>';
+            html += '<img src='+ item.imageLink + ' />';
+            html += '</br>';
+            html += '<p> Date: '+ item.date + '</p>';
+            html += '</br>';
+            html += '</br>';
+          });
+
+          html += '';
+
+          dataContainer.html(html);
+    }
+})
+});
+</script>
+
+</body>
+</html>

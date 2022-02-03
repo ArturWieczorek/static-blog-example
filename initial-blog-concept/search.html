@@ -1,0 +1,116 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A simple Simple Static Blog template</title>
+  <meta name="description" content="A Simple Static Blog template.">
+  <meta name="author" content="Artur Wieczorek">
+
+  <meta property="og:title" content="Simple Static Blog">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/lunr/lunr.js"></script>
+  <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
+  <link rel="stylesheet" href="mystyle.css">
+</head>
+
+<body>
+
+<p>
+  <a href="/github-website/index.html">Main page</a>
+</p>
+
+<p> Search by blog post title:
+  <input type="text" id="titleSearch" value="blog">
+<p>
+
+</br></br>
+
+<div id="pagination">
+    <div class="data-container">
+        <div class="pagination"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="blog_database.json"></script>
+<script>
+
+const titleSearch = document.getElementById('titleSearch');
+const blogPosts = JSON.parse(data);
+console.log('Blog entries from json database: ', blogPosts);
+
+let index = lunr(function () {
+    this.ref('title')
+    this.field('title')
+    this.field('preview')
+    this.field('author')
+
+    blogPosts.forEach(function (doc) {
+        this.add(doc)
+    }, this)
+});
+
+let searchKeyword = "title:" + titleSearch.value
+let results = index.search(searchKeyword);
+let resultsFull = results.map(function (item) {
+    return blogPosts.filter(function (value, index, arr) {
+        return value.title == item.ref;
+    })[0];
+});
+
+console.log('Results: ', results);
+console.log('Full Results: ', resultsFull);
+
+const search = function(source) {
+  $(document).ready(function(){
+    $('#pagination').pagination({
+      dataSource: source,
+      pageSize: 2,
+      className: 'paginationjs-theme-green',
+      callback: function(data, pagination) {
+        var html = '';
+            var dataContainer = $('.data-container');
+            $.each(data, function(index, item) {
+              html += '<p><a href='+ item.link + '>' + item.title  + '</a></p>';
+              html += '<p>'+ item.preview + '</p>';
+              html += '<img src='+ item.imageLink + ' />';
+              html += '</br>';
+              html += '<p> Date: '+ item.date + '</p>';
+              html += '</br>';
+              html += '</br>';
+            });
+
+            html += '';
+
+            dataContainer.html(html);
+          }
+        })
+    })
+};
+
+const searchByTitleInputHandler = function(e) {
+    searchKeyword = e.target.value.toString() + "*";
+    console.log("search keyword: " + searchKeyword)
+
+    let results = index.search(searchKeyword);
+    console.log("results : " + JSON.stringify(results))
+
+    let resultsFull = results.map(function (item) {
+        console.log("Item results : " + JSON.stringify(item))
+        return blogPosts.filter(function (value, index, arr) {
+            return value.title == item.ref;
+        })[0];
+    });
+    search(resultsFull);
+}
+
+titleSearch.addEventListener('input', searchByTitleInputHandler);
+
+search(resultsFull);
+
+</script>
+</body>
+</html>
